@@ -146,6 +146,10 @@ class Deploy {
 		} else if (!config.apiUrl) {
 			config.apiUrl = '';
 		}
+		if (!config.userAgent) {
+			config.userAgent =
+				'twinkle-meta-deploy/1.0 (https://meta.wikimedia.org/wiki/User:Hamish; https://github.com/cchamish/twinkle-meta) mwn';
+		}
 		this.api.setOptions(config);
 	}
 
