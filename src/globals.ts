@@ -13,11 +13,3 @@ $.extend(Twinkle, {
 	Page,
 	Api,
 });
-
-// Make jQuery Deferred exceptions hit the source map during debugging
-// @ts-ignore
-if (typeof __webpack_exports__ !== 'undefined') {
-	jQuery.Deferred.exceptionHook = function (err) {
-		throw err;
-	};
-}

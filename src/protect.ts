@@ -12,6 +12,18 @@ export class Protect extends ProtectCore {
 
 	existingTagRegex = /\{\{\s*(?:Permprot|Temprot|Vprotected|PP-template|Protected interface)\b[^}]*\}\}\s*/i;
 
+	// twinkle-core's makeWindow() fires changeAction on the hidden 'protect' radio for non-sysops
+	changeAction(e) {
+		if (!Morebits.userIsSysop && e.target && e.target.values === 'protect') {
+			const radios = Array.from(e.target.form.actiontype || []) as HTMLInputElement[];
+			const checked = radios.find((el) => el.checked);
+			if (checked) {
+				return super.changeAction({ target: checked });
+			}
+		}
+		return super.changeAction(e);
+	}
+
 	getProtectionLevels() {
 		return {
 			'all': {

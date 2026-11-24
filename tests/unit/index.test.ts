@@ -214,6 +214,29 @@ describe('Protect (Meta:RFH requests)', () => {
 		const createPresets = protect.getCreateProtectionPresets();
 		expect(createPresets[0].list[0].value).toBe('create-salt');
 	});
+
+	it('redirects non-sysop initial protect radio change to the checked request radio', () => {
+		const protect = Object.create(Protect.prototype) as Protect;
+		const superSpy = jest
+			.spyOn(Object.getPrototypeOf(Protect.prototype), 'changeAction')
+			.mockImplementation(() => {});
+		const protectRadio = { values: 'protect', checked: false } as any;
+		const requestRadio = { values: 'request', checked: true } as any;
+		protectRadio.form = { actiontype: [protectRadio, requestRadio] };
+		requestRadio.form = protectRadio.form;
+
+		(Morebits as any).userIsSysop = false;
+		protect.changeAction({ target: protectRadio });
+		expect(superSpy).toHaveBeenCalledWith({ target: requestRadio });
+
+		superSpy.mockClear();
+		(Morebits as any).userIsSysop = true;
+		protect.changeAction({ target: protectRadio });
+		expect(superSpy).toHaveBeenCalledWith({ target: protectRadio });
+
+		(Morebits as any).userIsSysop = false;
+		superSpy.mockRestore();
+	});
 });
 
 describe('Block (Meta block notices)', () => {

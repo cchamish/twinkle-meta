@@ -66,7 +66,10 @@ module.exports = {
 		static: path.join(__dirname, 'build'),
 		port: 5500,
 		host: 'localhost',
-		allowedHosts: 'all'
+		allowedHosts: 'all',
+		client: {
+			overlay: false,
+		},
 	},
 };
 
