@@ -1,3 +1,5 @@
+import fs from 'fs';
+import path from 'path';
 import { Arv } from '../../src/arv';
 import { Block } from '../../src/block';
 import { setDefaultConfig } from '../../src/core';
@@ -104,7 +106,6 @@ describe('Speedy (Meta CSD)', () => {
 				isSysop,
 				isMultiple: false,
 				isRadioClick: false,
-				name: isSysop ? 'sysopSingle' : 'userSingle',
 			};
 			s.getMode = () => s.mode;
 			s.params = { csd: ['g1-vandalism'], notify: true, warnusertalk: true };
@@ -340,12 +341,20 @@ describe('Xfd (Meta:RfD)', () => {
 			wgPageContentModel: 'wikitext',
 			wgNamespaceNumber: 0,
 		});
-		const warnSpy = jest.spyOn(Morebits.status, 'warn').mockImplementation(() => {});
+		const warnSpy = jest.spyOn(Morebits.status, 'warn').mockImplementation(() => undefined as any);
 		const mode = new MetaRfdMode();
 		const res = mode.tagPage();
 		expect(warnSpy).toHaveBeenCalled();
 		expect(res.state()).toBe('resolved');
 		warnSpy.mockRestore();
 		mw.config.set({ wgIsProbablyEditable: true });
+	});
+});
+
+describe('Build config (Meta preferences isolation)', () => {
+	it('bundles twinklemetaoptions.js instead of twinkleoptions.js', () => {
+		const bundle = fs.readFileSync(path.resolve(__dirname, '../../build/twinkle.js'), 'utf8');
+		expect(bundle).toContain('/twinklemetaoptions.js');
+		expect(bundle).not.toContain('/twinkleoptions.js');
 	});
 });

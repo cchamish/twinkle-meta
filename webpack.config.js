@@ -13,6 +13,11 @@ module.exports = {
 	module: {
 		rules: [
 			{
+				test: /[\\/]twinkle-core[\\/]src[\\/]Config\.ts$/,
+				loader: path.resolve(__dirname, 'scripts/twinkle-config-loader.js'),
+				enforce: 'pre',
+			},
+			{
 				test: /\.ts$/,
 				loader: 'ts-loader',
 				options: {
