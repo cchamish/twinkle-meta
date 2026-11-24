@@ -48,17 +48,10 @@ const minimist = require('minimist');
 // All file paths are with respect to repository root
 // Remove twinkle-pagestyles.css if deploying as user script
 const deployTargets = [
-	{ file: 'build/twinkle.js', target: 'MediaWiki:Gadget-TwinkleV3.js' },
-	{ file: 'build/twinkle.css', target: 'MediaWiki:Gadget-TwinkleV3.css' },
-	{ file: 'build/morebits.js', target: 'MediaWiki:Gadget-morebitsV3.js' },
-	{
-		file: 'build/morebits.css',
-		target: 'MediaWiki:Gadget-morebitsV3.css',
-	},
-	{
-		file: 'build/twinkle-pagestyles.css',
-		target: 'MediaWiki:Gadget-Twinkle-pagestylesV3.css',
-	},
+	{ file: 'build/twinkle.js', target: 'User:Hamish/twinkle.js' },
+	{ file: 'build/twinkle.css', target: 'User:Hamish/twinkle.css' },
+	{ file: 'build/morebits.js', target: 'User:Hamish/morebits.js' },
+	{ file: 'build/morebits.css', target: 'User:Hamish/morebits.css' },
 ];
 
 class Deploy {
@@ -97,14 +90,8 @@ class Deploy {
 		}
 		if (args.testwiki) {
 			config.apiUrl = `https://test.wikipedia.org/w/api.php`;
-		} else {
-			if (!config.apiUrl) {
-				if (Object.keys(config).length) {
-					log('yellow', 'Tip: you can avoid this prompt by setting the apiUrl as well in credentials.json');
-				}
-				const site = await input('> Enter sitename (eg. en.wikipedia.org)');
-				config.apiUrl = `https://${site}/w/api.php`;
-			}
+		} else if (!config.apiUrl) {
+			config.apiUrl = `https://meta.wikimedia.org/w/api.php`;
 		}
 		this.api.setOptions(config);
 	}

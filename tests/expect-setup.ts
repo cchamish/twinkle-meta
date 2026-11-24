@@ -39,5 +39,34 @@ declare global {
 	}
 }
 
+if (typeof (global as any).Morebits === 'undefined') {
+	(global as any).Morebits = {
+		userIsSysop: false,
+		userIsInGroup: () => false,
+		pageNameNorm: 'Test page',
+		ip: { isRange: () => false, validCIDR: () => false },
+		string: {
+			escapeRegExp: (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'),
+			toUpperCaseFirstChar: (s: string) => (s ? s[0].toUpperCase() + s.slice(1) : ''),
+			formatReasonText: (s: string) => s.trim(),
+			isInfinity: (s: string) => ['infinity', 'indefinite', 'infinite', 'never'].includes(s),
+		},
+		wiki: {
+			api: class {},
+			page: class {},
+			user: class {},
+		},
+		simpleWindow: class {},
+		quickForm: class {},
+		status: {
+			init: () => {},
+			info: () => {},
+			warn: () => {},
+			error: () => {},
+			actionCompleted: () => {},
+		},
+	};
+}
+
 // Need to export something for the declare global to work
 export {};

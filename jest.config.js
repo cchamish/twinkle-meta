@@ -13,6 +13,7 @@ module.exports = {
 			testMatch: ['<rootDir>/tests/unit/*.test.[jt]s'],
 			preset: 'ts-jest',
 			testEnvironment: 'jsdom',
+			transformIgnorePatterns: ['/node_modules/(?!twinkle-core/)'],
 			setupFilesAfterEnv: ['mock-mediawiki', './tests/expect-setup.ts'],
 			globals: {
 				...tsJestOptions,

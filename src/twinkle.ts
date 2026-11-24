@@ -3,10 +3,18 @@ import messages from './messages.json';
 import mwMessageList from './mw-messages';
 
 // import modules
+import { Arv } from './arv';
+import { Block } from './block';
 import { Fluff } from './fluff';
+import { Protect } from './protect';
+import { Speedy } from './speedy';
+import { Tag } from './tag';
+import { Unlink } from './unlink';
+import { Warn } from './warn';
+import { Xfd } from './xfd';
 
 // no customisation; import directly from core
-import { DiffCore as Diff } from './core';
+import { BatchDeleteCore, BatchUndeleteCore, DiffCore as Diff } from './core';
 
 // register some globals for debugging, as per twinkle v2
 import './globals';
@@ -18,7 +26,7 @@ if (!Morebits.userIsInGroup('autoconfirmed') && !Morebits.userIsInGroup('confirm
 
 Twinkle.userAgent = `Twinkle (${mw.config.get('wgWikiID')})`;
 
-Twinkle.summaryAd = ' ([[Project:TW|TW]])';
+Twinkle.summaryAd = ' ([[User:Hamish/twinkle|TW]])';
 
 Twinkle.changeTags = '';
 
@@ -27,7 +35,20 @@ Twinkle.messageOverrides = messages;
 Twinkle.extraMwMessages = mwMessageList;
 
 // List of module classes enabled
-Twinkle.registeredModules = [Fluff, Diff];
+Twinkle.registeredModules = [
+	Arv,
+	Block,
+	BatchDeleteCore,
+	BatchUndeleteCore,
+	Diff,
+	Fluff,
+	Protect,
+	Speedy,
+	Tag,
+	Unlink,
+	Warn,
+	Xfd,
+];
 
 /**
  * Adjust the following configurations if necessary
