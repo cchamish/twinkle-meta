@@ -27,6 +27,7 @@ jobs:
       - run: npm run build
       - name: Deploy to Meta
         env:
+          MW_API_URL: ${{ secrets.MW_API_URL }}
           MW_USERNAME: ${{ secrets.MW_USERNAME }}
           MW_PASSWORD: ${{ secrets.MW_PASSWORD }}
         run: node scripts/deploy.js --yes

@@ -84,8 +84,14 @@ const deployTargets = [
 	{ file: 'build/twinkle.css', target: `${USER_PREFIX}/twinkle/twinkle.css` },
 	{ file: 'build/morebits.js', target: `${USER_PREFIX}/twinkle/morebits.js` },
 	{ file: 'build/morebits.css', target: `${USER_PREFIX}/twinkle/morebits.css` },
-	{ file: 'node_modules/twinkle-core/lib/select2.min.js', target: `${USER_PREFIX}/twinkle/select2.js` },
-	{ file: 'node_modules/twinkle-core/lib/select2.min.css', target: `${USER_PREFIX}/twinkle/select2.css` },
+	{
+		file: 'node_modules/twinkle-core/lib/select2.min.js',
+		target: `${USER_PREFIX}/twinkle/select2.js`,
+	},
+	{
+		file: 'node_modules/twinkle-core/lib/select2.min.css',
+		target: `${USER_PREFIX}/twinkle/select2.css`,
+	},
 	{ content: loaderScript, target: `${USER_PREFIX}/twinkle.js` },
 ];
 
@@ -124,7 +130,9 @@ class Deploy {
 			this.usingOAuth = true;
 		} catch (e) {
 			if (args.yes && (!config.username || !config.password)) {
-				throw new Error('Missing credentials: set MW_USERNAME and MW_PASSWORD or scripts/credentials.json.');
+				throw new Error(
+					'Missing credentials: set MW_USERNAME and MW_PASSWORD or scripts/credentials.json.'
+				);
 			}
 			if (!config.username) {
 				config.username = await input('> Enter username');
@@ -136,7 +144,7 @@ class Deploy {
 		if (args.testwiki) {
 			config.apiUrl = `https://test.wikipedia.org/w/api.php`;
 		} else if (!config.apiUrl) {
-			config.apiUrl = ``;
+			config.apiUrl = '';
 		}
 		this.api.setOptions(config);
 	}
@@ -166,7 +174,9 @@ class Deploy {
 	}
 
 	async savePages() {
+		if (!args.yes) {
 			await input(`> Press [Enter] to start deploying to ${this.siteName} or [ctrl + C] to cancel`);
+		}
 
 		log('yellow', '--- starting deployment ---');
 
