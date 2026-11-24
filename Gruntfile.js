@@ -25,13 +25,7 @@ function makeHeader() {
 			'[WARN] Git working directory is not clean.'
 		);
 
-	let header = `/*  _______________________________________________________________________________	
- * |                                                                               |
- * |                     === WARNING: GLOBAL GADGET FILE ===                       |
- * |                   Changes to this page affect many users.                     |
- * |  Please discuss changes on the talk page or on [[WT:Gadget]] before editing.  |
- * |_______________________________________________________________________________|
- *
+	let header = `/*
  * Built from source code at GitHub repository [https://github.com/cchamish/twinkle-meta]
  * All changes should be made in the repository. Please do not attempt to edit this file directly.
 `;
