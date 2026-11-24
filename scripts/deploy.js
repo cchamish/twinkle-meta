@@ -105,6 +105,13 @@ class Deploy {
 		try {
 			return require(__dirname + '/credentials.json');
 		} catch (e) {
+			if (process.env.MW_USERNAME && process.env.MW_PASSWORD) {
+				return {
+					apiUrl: process.env.MW_API_URL,
+					username: process.env.MW_USERNAME,
+					password: process.env.MW_PASSWORD,
+				};
+			}
 			log('red', 'No credentials.json file found.');
 			return {};
 		}
@@ -116,6 +123,9 @@ class Deploy {
 			this.api.initOAuth();
 			this.usingOAuth = true;
 		} catch (e) {
+			if (args.yes && (!config.username || !config.password)) {
+				throw new Error('Missing credentials: set MW_USERNAME and MW_PASSWORD or scripts/credentials.json.');
+			}
 			if (!config.username) {
 				config.username = await input('> Enter username');
 			}
@@ -126,7 +136,7 @@ class Deploy {
 		if (args.testwiki) {
 			config.apiUrl = `https://test.wikipedia.org/w/api.php`;
 		} else if (!config.apiUrl) {
-			config.apiUrl = `https://meta.wikimedia.org/w/api.php`;
+			config.apiUrl = ``;
 		}
 		this.api.setOptions(config);
 	}
@@ -144,7 +154,9 @@ class Deploy {
 	// TODO: read last saved commit hash and use that to construct a meaningful summary
 	async makeEditSummary() {
 		const sha = execSync('git rev-parse --short HEAD').toString('utf8').trim();
-		const message = await input('> Edit summary message (optional): ');
+		const message = args.yes
+			? execSync('git log -1 --pretty=%s').toString('utf8').trim()
+			: await input('> Edit summary message (optional): ');
 		this.editSummary = `Commit ${sha}: ${message || 'Updated from repository'}`;
 		console.log(`Edit summary is: "${this.editSummary}"`);
 	}
@@ -154,10 +166,11 @@ class Deploy {
 	}
 
 	async savePages() {
-		await input(`> Press [Enter] to start deploying to ${this.siteName} or [ctrl + C] to cancel`);
+			await input(`> Press [Enter] to start deploying to ${this.siteName} or [ctrl + C] to cancel`);
 
 		log('yellow', '--- starting deployment ---');
 
+		let hadFailure = false;
 		for await (let { file, content, target } of deployTargets) {
 			const label = file || 'generated loader';
 			let fileText = content !== undefined ? content : await this.readFile(file);
@@ -169,11 +182,15 @@ class Deploy {
 					log('green', `✔ Successfully saved ${label} to ${target} on ${this.siteName}`);
 				}
 			} catch (error) {
+				hadFailure = true;
 				log('red', `✘ Failed to save ${label} to ${target} on ${this.siteName}`);
 				logError(error);
 			}
 		}
 		log('yellow', '--- end of deployment ---');
+		if (hadFailure) {
+			process.exitCode = 1;
+		}
 	}
 }
 
@@ -200,5 +217,8 @@ function log(color, ...args) {
 	console.log(chalk[color](...args));
 }
 
-const args = minimist(process.argv.slice(2));
+const args = minimist(process.argv.slice(2), {
+	boolean: ['yes', 'testwiki'],
+	alias: { y: 'yes' },
+});
 new Deploy().deploy();
