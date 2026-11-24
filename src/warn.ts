@@ -1,4 +1,4 @@
-import { WarnCore, warning, warningLevel, getPref, makeTemplate } from './core';
+import { Config, Preference, WarnCore, warning, warningLevel, getPref, makeTemplate } from './core';
 
 const AUTO_SIGNED_TEMPLATES = new Set([
 	'Test1',
@@ -21,6 +21,55 @@ export class Warn extends WarnCore {
 	footerlinks = {
 		'Meta:Warning templates': 'Category:User warning templates',
 	};
+
+	static userPreferences() {
+		return {
+			title: 'Warn user',
+			preferences: [
+				{
+					name: 'defaultWarningGroup',
+					label: 'Default warning level',
+					type: 'enum',
+					enumValues: {
+						'1': 'Level 1',
+						'2': 'Level 2',
+						'3': 'Level 3',
+						'4': 'Level 4',
+						'5': 'Level 4im',
+						'6': 'Single-issue notices',
+						'8': 'All warnings',
+						'9': 'Custom warnings',
+					},
+					default: '1',
+				},
+				{
+					name: 'showSharedIPNotice',
+					label: 'Add extra notice on shared IP talk pages',
+					type: 'boolean',
+					default: true,
+				},
+				{
+					name: 'watchWarnings',
+					label: 'When warning a user, how long to watch their talk page for',
+					type: 'enum',
+					enumValues: Config.watchlistEnums,
+					default: '1 month',
+				},
+				{
+					name: 'oldSelect',
+					label: 'Use the non-searchable classic select menu',
+					type: 'boolean',
+					default: false,
+				},
+				{
+					name: 'customWarningList',
+					label: 'Custom warning templates to display',
+					type: 'customList',
+					default: [],
+				},
+			] as Preference[],
+		};
+	}
 
 	warningLevels = {
 		level1: {

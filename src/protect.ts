@@ -1,4 +1,4 @@
-import { ProtectCore, Page, Api, Twinkle, getPref, msg } from './core';
+import { Config, Preference, ProtectCore, Page, Api, Twinkle, getPref, msg } from './core';
 
 const RFH_PAGE = 'Meta:Requests for help from a sysop or bureaucrat';
 
@@ -9,6 +9,36 @@ export class Protect extends ProtectCore {
 	footerlinks = {
 		'Meta:RFH': RFH_PAGE,
 	};
+
+	static userPreferences() {
+		return {
+			title: 'Page protection (RPP)',
+			preferences: [
+				{
+					name: 'watchRequestedPages',
+					label: 'When requesting page protection, how long to watch the page for',
+					type: 'enum',
+					enumValues: Config.watchlistEnums,
+					default: 'yes',
+				},
+				{
+					name: 'watchPPTaggedPages',
+					label: 'When tagging a page with a protection template, how long to watch it for',
+					type: 'enum',
+					enumValues: Config.watchlistEnums,
+					default: 'default',
+				},
+				{
+					name: 'watchProtectedPages',
+					label: 'When protecting a page, how long to watch it for',
+					type: 'enum',
+					enumValues: Config.watchlistEnums,
+					default: 'default',
+					adminOnly: true,
+				},
+			] as Preference[],
+		};
+	}
 
 	existingTagRegex = /\{\{\s*(?:Permprot|Temprot|Vprotected|PP-template|Protected interface)\b[^}]*\}\}\s*/i;
 

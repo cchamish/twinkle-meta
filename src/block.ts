@@ -1,4 +1,4 @@
-import { BlockCore, BlockPresetInfo } from './core';
+import { BlockCore, BlockPresetInfo, Preference } from './core';
 
 export class Block extends BlockCore {
 	defaultBlockTemplate = 'Blocked';
@@ -12,6 +12,27 @@ export class Block extends BlockCore {
 	footerlinks = {
 		'Meta:Blocking policy': 'Meta:Blocking policy',
 	};
+
+	static userPreferences() {
+		return {
+			title: 'Block user',
+			adminOnly: true,
+			preferences: [
+				{
+					name: 'defaultToPartialBlocks',
+					label: 'Select partial blocks by default when opening the block menu',
+					type: 'boolean',
+					default: false,
+				},
+				{
+					name: 'blankTalkpageOnIndefBlock',
+					label: 'Blank the talk page when indefinitely blocking users',
+					type: 'boolean',
+					default: false,
+				},
+			] as Preference[],
+		};
+	}
 
 	blockPresetsInfo: Record<string, BlockPresetInfo> = {
 		'Blocked': {
