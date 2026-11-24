@@ -30,5 +30,17 @@ module.exports = function (source) {
 		);
 	}
 
+	if (file === 'speedyCore.ts') {
+		out = out
+			.replace(
+				'[[WP:CSD#G8|G8]]: Talk page of deleted page ',
+				'[[Meta:Deletion policy#M3|M3]]: Talk page of deleted page '
+			)
+			.replace(
+				'[[WP:CSD#G8|G8]]: Redirect to deleted page ',
+				'[[Meta:Deletion policy#M2|M2]]: Redirect to deleted page '
+			);
+	}
+
 	return imports + out;
 };
