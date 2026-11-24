@@ -76,6 +76,12 @@ mw.loader.using([
 /* </nowiki> */
 `;
 
+const preferencesPage = `<div id="twinkle-config" style="border: 1px solid #a2a9b1; background: #f8f9fa;">
+<div id="twinkle-config-titlebar" style="padding: 0.5em 0.8em; font-weight: bold;">Twinkle Meta Preferences</div>
+<div id="twinkle-config-content" style="padding: 0.5em 0.8em;">Loading Twinkle preferences... (Ensure [[${USER_PREFIX}/twinkle.js]] is loaded.)</div>
+</div>
+`;
+
 // Adjust target file names if necessary
 // All file paths are with respect to repository root
 // Remove twinkle-pagestyles.css if deploying as user script
@@ -93,6 +99,7 @@ const deployTargets = [
 		target: `${USER_PREFIX}/twinkle/select2.css`,
 	},
 	{ content: loaderScript, target: `${USER_PREFIX}/twinkle.js` },
+	{ content: preferencesPage, target: `${USER_PREFIX}/twinkle/Preferences` },
 ];
 
 class Deploy {

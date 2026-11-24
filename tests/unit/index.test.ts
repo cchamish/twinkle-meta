@@ -392,5 +392,7 @@ describe('Build config (Meta preferences isolation)', () => {
 		const bundle = fs.readFileSync(path.resolve(__dirname, '../../build/twinkle.js'), 'utf8');
 		expect(bundle).toContain('/twinklemetaoptions.js');
 		expect(bundle).not.toContain('/twinkleoptions.js');
+		expect(bundle).toContain('Hamish/twinkle/Preferences');
+		expect(bundle).not.toContain("'Twinkle/Preferences'");
 	});
 });
