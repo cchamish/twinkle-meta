@@ -14,7 +14,7 @@ concurrency:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     if: ${{ github.repository == 'cchamish/twinkle-meta' }}
     steps:
       - uses: actions/checkout@v4
