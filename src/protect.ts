@@ -1,4 +1,4 @@
-import { ProtectCore, Page, Api, Twinkle, getPref, msg, str_endsWith } from './core';
+import { ProtectCore, Page, Api, Twinkle, getPref, msg } from './core';
 
 const RFH_PAGE = 'Meta:Requests for help from a sysop or bureaucrat';
 
@@ -13,8 +13,8 @@ export class Protect extends ProtectCore {
 	existingTagRegex = /\{\{\s*(?:Permprot|Temprot|Vprotected|PP-template|Protected interface)\b[^}]*\}\}\s*/i;
 
 	// twinkle-core's makeWindow() fires changeAction on the hidden 'protect' radio for non-sysops
-	changeAction(e) {
-		if (!Morebits.userIsSysop && e.target && e.target.values === 'protect') {
+	changeAction(e: { target?: HTMLInputElement & { values?: string } }) {
+		if (!Morebits.userIsSysop && e.target && e.target.values === 'protect' && e.target.form) {
 			const radios = Array.from(e.target.form.actiontype || []) as HTMLInputElement[];
 			const checked = radios.find((el) => el.checked);
 			if (checked) {
@@ -55,12 +55,11 @@ export class Protect extends ProtectCore {
 		};
 	}
 
-	protectionPresetsInfo = {
+	protectionPresetsInfo: ProtectCore['protectionPresetsInfo'] = {
 		'unprotect': {
 			edit: 'all',
 			move: 'all',
 			create: 'all',
-			reason: null,
 			template: 'none',
 		},
 		'semi-vandalism': {
@@ -200,7 +199,7 @@ export class Protect extends ProtectCore {
 		if (input.reason) {
 			reason = reason ? `${reason} \u2013 ${input.reason}` : input.reason;
 		}
-		if (reason && !str_endsWith(reason, '.')) {
+		if (reason && !reason.endsWith('.')) {
 			reason += '.';
 		}
 
@@ -226,7 +225,7 @@ export class Protect extends ProtectCore {
 		);
 		if (existingRe.test(text)) {
 			statusElement.error(msg('protect-request-exists', rppPage.getPageName()));
-			return;
+			return $.Deferred().reject() as any;
 		}
 
 		const [requestText, summary] = this.getRequestTextAndSummary(input);
@@ -251,6 +250,7 @@ export class Protect extends ProtectCore {
 							: undefined,
 				}).post();
 			}
+			return $.Deferred().resolve() as any;
 		});
 	}
 }

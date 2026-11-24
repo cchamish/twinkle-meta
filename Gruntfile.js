@@ -76,7 +76,7 @@ module.exports = function (grunt) {
 					minimizer: [
 						new TerserPlugin({
 							extractComments: /@preserve/,
-							terserOptions: { output: { ascii_only: true } }
+							terserOptions: { ecma: 2019, output: { ascii_only: true } }
 						}),
 					],
 				},

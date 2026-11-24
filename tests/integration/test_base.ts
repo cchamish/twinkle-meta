@@ -18,7 +18,7 @@ export function setupMwn() {
 	}
 }
 
-export async function setupMWBrowser(page) {
+export async function setupMWBrowser(page: any) {
 	await page.goto('http://localhost:8080/index.php?title=Special:UserLogin');
 	await page.fill('#wpName1', 'Wikiuser');
 	await page.fill('#wpPassword1', 'wikipassword');
@@ -43,7 +43,7 @@ export async function loadExpectInBrowser() {
 	});
 }
 
-async function readFile(path) {
+async function readFile(path: string) {
 	return (await fs.promises.readFile(path)).toString();
 }
 
@@ -57,7 +57,9 @@ export async function loadTwinkle() {
 	// we can do without the css peer gadget
 	await page.addStyleTag({
 		content:
-			(await readFile(twinkleCore + 'morebits/morebits.css')) + '\n' + (await readFile(repoRoot + 'src/twinkle.css')),
+			(await readFile(twinkleCore + 'morebits/morebits.css')) +
+			'\n' +
+			(await readFile(repoRoot + 'src/twinkle.css')),
 	});
 	await page.evaluate(await readFile(twinkleCore + 'morebits/morebits.js'));
 	await page.evaluate(await readFile(repoRoot + 'build/twinkle.js'));
@@ -65,7 +67,7 @@ export async function loadTwinkle() {
 
 export class TwinkleModule {
 	moduleName: string;
-	constructor(moduleName) {
+	constructor(moduleName: string) {
 		this.moduleName = moduleName;
 	}
 	async open(load = true) {
@@ -86,7 +88,7 @@ export class TwinkleModule {
 	}
 }
 
-export async function createRandomPage(prefix, content?, summary?) {
+export async function createRandomPage(prefix: string, content?: string, summary?: string) {
 	const pageName = prefix + '/' + rand();
 	await bot.create(pageName, content || 'Test page', summary);
 	return pageName;
@@ -103,7 +105,7 @@ export async function goto(pageName: string) {
 	}
 }
 
-export async function createAndGotoRandomPage(prefix, content?, summary?) {
+export async function createAndGotoRandomPage(prefix: string, content?: string, summary?: string) {
 	const pageName = await createRandomPage(prefix, content, summary);
 	await goto(pageName);
 	return pageName;
@@ -113,6 +115,6 @@ export function rand(digits = 5) {
 	return String(Math.random()).slice(2, 2 + digits);
 }
 
-export async function readText(pageName) {
+export async function readText(pageName: string) {
 	return (await bot.read(pageName)).revisions[0].content;
 }

@@ -4,12 +4,17 @@
 		"allowJs": true,
 		"noEmit": true,
 		"target": "ES2019",
-		"moduleResolution": "Node",
-		"lib": ["es6"]
+		"module": "esnext",
+		"moduleResolution": "bundler",
+		"esModuleInterop": true,
+		"resolveJsonModule": true,
+		"lib": ["dom", "es2019"],
+		"types": ["jest", "node", "chai"]
 	},
 	"include": [
 		"./**/*",
-		"../node_modules/types-mediawiki/index.d.ts",
+		"../node_modules/types-mediawiki",
+		"../node_modules/twinkle-core/morebits/index.d.ts",
 		"../node_modules/expect-playwright/global.d.ts",
 		"../node_modules/jest-playwright-preset/types/global.d.ts"
 	]

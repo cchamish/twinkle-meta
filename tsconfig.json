@@ -1,15 +1,15 @@
 {
 	/* Visit https://aka.ms/tsconfig.json to read more about this file */
 	"compilerOptions": {
-		"target": "es6",
+		"target": "es2019",
 		"module": "es2020",
 		"lib": [
 			"dom",
-			"es6",
+			"es2019"
 		],
+		"rootDir": "./src",
 		"outDir": "./build",
 		"sourceMap": true,
-		"moduleResolution": "node",
 		"resolveJsonModule": true,
 
 		// With importHelpers=true, TS helper functions are prevented from

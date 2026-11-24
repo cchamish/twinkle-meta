@@ -100,7 +100,7 @@ describe('Speedy (Meta CSD)', () => {
 		const runPreprocess = (isSysop: boolean) => {
 			const s = Object.create(Speedy.prototype) as Speedy;
 			s.flatObject = {
-				'g1-vandalism': { label: 'G1: Vandalism', value: 'g1-vandalism', code: 'g1' },
+				'g1-vandalism': { label: 'G1: Vandalism', value: 'g1-vandalism', code: 'g1' } as any,
 			};
 			s.mode = {
 				isSysop,
@@ -128,7 +128,7 @@ describe('Speedy (Meta CSD)', () => {
 		const runG6 = (isSysop: boolean) => {
 			const s = Object.create(Speedy.prototype) as Speedy;
 			s.flatObject = {
-				g6: { label: "G6: Author's request", value: 'g6', code: 'g6' },
+				g6: { label: "G6: Author's request", value: 'g6', code: 'g6' } as any,
 			};
 			s.mode = { isSysop, isMultiple: false, isRadioClick: false };
 			s.getMode = () => s.mode;
@@ -141,7 +141,7 @@ describe('Speedy (Meta CSD)', () => {
 
 		const g9Del = Object.create(Speedy.prototype) as Speedy;
 		g9Del.flatObject = {
-			g9: { label: 'G9: Attack page', value: 'g9', code: 'g9', redactContents: true },
+			g9: { label: 'G9: Attack page', value: 'g9', code: 'g9', redactContents: true } as any,
 		};
 		g9Del.mode = { isSysop: true, isMultiple: false, isRadioClick: false };
 		g9Del.getMode = () => g9Del.mode;
@@ -212,7 +212,7 @@ describe('Protect (Meta:RFH requests)', () => {
 		expect(semiSummary).toBe('Requesting semi creation protection of [[:Test page]].');
 
 		const createPresets = protect.getCreateProtectionPresets();
-		expect(createPresets[0].list[0].value).toBe('create-salt');
+		expect(createPresets[0].list![0].value).toBe('create-salt');
 	});
 
 	it('redirects non-sysop initial protect radio change to the checked request radio', () => {
@@ -315,11 +315,24 @@ describe('Block (Meta block notices)', () => {
 describe('Warn (Meta signature handling)', () => {
 	it('avoids double signatures on auto-signed Meta templates', () => {
 		const warn = Object.create(Warn.prototype) as Warn;
-		expect(warn.getWarningWikitext('Test1', 'Meta:Sandbox', '', false)).toBe(
-			'{{subst:Test1|1=Meta:Sandbox}}'
-		);
+		for (const tpl of [
+			'Test1',
+			'Offtopic',
+			'Offtopic-edits',
+			'Not an encyclopedia',
+			'Norecreate',
+			'Copyviowarn-possible',
+			'Sb',
+		]) {
+			expect(warn.getWarningWikitext(tpl, 'Meta:Sandbox', '', false)).toBe(
+				`{{subst:${tpl}|1=Meta:Sandbox}}`
+			);
+		}
 		expect(warn.getWarningWikitext('Uw-delete1', 'Test page', '', false)).toBe(
 			'{{subst:Uw-delete1|1=Test page}} ~~~~'
+		);
+		expect(warn.getWarningWikitext('Uw-machine', 'Test page', '', false)).toBe(
+			'{{subst:Uw-machine|1=Test page}} ~~~~'
 		);
 	});
 });

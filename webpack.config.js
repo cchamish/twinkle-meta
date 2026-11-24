@@ -9,7 +9,7 @@ module.exports = {
 	devtool: 'source-map',
 
 	entry: './src/twinkle.ts',
-	target: ['web', 'es6'],
+	target: ['web', 'es2019'],
 	module: {
 		rules: [
 			{
@@ -22,6 +22,9 @@ module.exports = {
 				loader: 'ts-loader',
 				options: {
 					transpileOnly: true,
+					compilerOptions: {
+						moduleResolution: 'node',
+					},
 				},
 			},
 			{

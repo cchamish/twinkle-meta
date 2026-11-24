@@ -98,7 +98,7 @@ export class Block extends BlockCore {
 		},
 	];
 
-	formatPartialBlockScope(params): string {
+	formatPartialBlockScope(params: Record<string, any>): string {
 		const parts: string[] = [];
 		const pages: string[] = Array.isArray(params.pagerestrictions)
 			? params.pagerestrictions.filter(Boolean)
@@ -108,7 +108,9 @@ export class Block extends BlockCore {
 		}
 
 		const namespaces: string[] = Array.isArray(params.namespacerestrictions)
-			? params.namespacerestrictions.filter((ns) => ns !== '' && ns !== null && ns !== undefined)
+			? params.namespacerestrictions.filter(
+					(ns: unknown) => ns !== '' && ns !== null && ns !== undefined
+			  )
 			: [];
 		if (namespaces.length) {
 			const nsMap: Record<string, string> = mw.config.get('wgFormattedNamespaces') || {};
@@ -137,7 +139,7 @@ export class Block extends BlockCore {
 		return parts.length ? parts.join('; ') : 'certain pages or actions on Meta-Wiki';
 	}
 
-	getBlockNoticeWikitextAndSummary(params): [string, string] {
+	getBlockNoticeWikitextAndSummary(params: Record<string, any>): [string, string] {
 		const preset = this.blockPresetsInfo[params.template] || {};
 		const templateName = preset.templateName || params.template || this.defaultBlockTemplate;
 		const reason = (params.reason || params.block_reason || preset.reason || '').trim();

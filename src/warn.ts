@@ -9,6 +9,12 @@ const AUTO_SIGNED_TEMPLATES = new Set([
 	'Spam',
 	'Attack',
 	'Bv',
+	'Offtopic',
+	'Offtopic-edits',
+	'Not an encyclopedia',
+	'Norecreate',
+	'Copyviowarn-possible',
+	'Sb',
 ]);
 
 export class Warn extends WarnCore {
@@ -133,8 +139,8 @@ export class Warn extends WarnCore {
 		isCustom: boolean
 	): string {
 		let text = makeTemplate(`subst:${templateName}`, {
-			1: article || null,
-			2: reason && !isCustom ? reason : null,
+			1: article || '',
+			2: reason && !isCustom ? reason : '',
 		});
 		if (isCustom && reason) {
 			text += ` ''${reason}''`;

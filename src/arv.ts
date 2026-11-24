@@ -104,7 +104,7 @@ export class Arv extends TwinkleModule {
 		const result = form.render();
 		dialog.setContent(result);
 		dialog.display();
-		result.previewer = new Morebits.wiki.preview(document.getElementById('twinklearv-previewbox'));
+		result.previewer = new Morebits.wiki.preview(document.getElementById('twinklearv-previewbox')!);
 	}
 
 	preview(form: HTMLFormElement) {

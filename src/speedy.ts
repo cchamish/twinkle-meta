@@ -1,13 +1,4 @@
-import {
-	SpeedyCore,
-	criterion,
-	getPref,
-	Page,
-	Preference,
-	Twinkle,
-	makeArray,
-	obj_entries,
-} from './core';
+import { SpeedyCore, criterion, getPref, Page, Preference, Twinkle, makeArray } from './core';
 
 export class Speedy extends SpeedyCore {
 	portletTooltip = Morebits.userIsSysop
@@ -21,7 +12,7 @@ export class Speedy extends SpeedyCore {
 	makeWindow() {
 		super.makeWindow();
 		if (this.result && this.result.tag_only && this.result.deleteRedirects) {
-			this.result.tag_only.addEventListener('change', (event) => {
+			this.result.tag_only.addEventListener('change', (event: Event) => {
 				const target = event.target as HTMLInputElement;
 				this.result.deleteRedirects.checked = !target.checked && getPref('deleteRedirectsOnDelete');
 			});
@@ -343,32 +334,35 @@ export class Speedy extends SpeedyCore {
 	preprocessParams() {
 		const params = this.params;
 		params.csd = makeArray(params.csd);
-		params.normalizeds = params.csd.map((critValue) => this.flatObject[critValue].code);
+		params.normalizeds = params.csd.map((critValue: string) => this.flatObject[critValue].code);
 		this.getTemplateParameters();
 		this.getMode();
 
-		const hasPref = (prefName: string, norm: string) =>
-			(getPref(prefName) || []).indexOf(norm) !== -1;
+		const hasPref = (prefName: string, norm: string) => (getPref(prefName) || []).includes(norm);
 
 		if (this.mode.isSysop) {
-			params.promptForSummary = params.normalizeds.some((norm) =>
+			params.promptForSummary = params.normalizeds.some((norm: string) =>
 				hasPref('promptForSpeedyDeletionSummary', norm)
 			);
 			params.warnUser =
 				params.warnusertalk &&
-				params.normalizeds.some((norm) => hasPref('warnUserOnSpeedyDelete', norm));
+				params.normalizeds.some((norm: string) => hasPref('warnUserOnSpeedyDelete', norm));
 		} else {
 			params.notifyUser =
 				params.notify &&
-				params.normalizeds.some((norm) => hasPref('notifyUserOnSpeedyDeletionNomination', norm));
+				params.normalizeds.some((norm: string) =>
+					hasPref('notifyUserOnSpeedyDeletionNomination', norm)
+				);
 		}
-		params.redactContents = params.csd.some((csd) => this.flatObject[csd].redactContents);
+		params.redactContents = params.csd.some((csd: string) => this.flatObject[csd].redactContents);
 		params.watch = params.normalizeds.some(
-			(norm) => hasPref('watchSpeedyPages', norm) && getPref('watchSpeedyExpiry')
+			(norm: string) => hasPref('watchSpeedyPages', norm) && getPref('watchSpeedyExpiry')
 		);
 		params.welcomeuser =
 			(params.notifyUser || params.warnUser) &&
-			params.normalizeds.some((norm) => hasPref('welcomeUserOnSpeedyDeletionNotification', norm));
+			params.normalizeds.some((norm: string) =>
+				hasPref('welcomeUserOnSpeedyDeletionNotification', norm)
+			);
 
 		this.preprocessParamInputs();
 	}
@@ -401,7 +395,8 @@ export class Speedy extends SpeedyCore {
 			});
 			reason = parts.join('; ');
 			if (params.promptForSummary) {
-				reason = prompt('Enter the deletion summary to use, or press OK to accept:', reason);
+				reason =
+					prompt('Enter the deletion summary to use, or press OK to accept:', reason) || reason;
 			}
 		}
 		params.deleteReason = reason;
@@ -415,11 +410,12 @@ export class Speedy extends SpeedyCore {
 
 		if (
 			!pageobj.canEdit() ||
-			['wikitext', 'Scribunto', 'javascript', 'css', 'sanitized-css'].indexOf(
+			!['wikitext', 'Scribunto', 'javascript', 'css', 'sanitized-css'].includes(
 				pageobj.getContentModel()
-			) === -1
+			)
 		) {
-			const talkName = new mw.Title(pageobj.getPageName()).getTalkPage().toText();
+			const talkTitle = new mw.Title(pageobj.getPageName()).getTalkPage();
+			const talkName = talkTitle ? talkTitle.toText() : pageobj.getPageName();
 			if (talkName === pageobj.getPageName()) {
 				pageobj
 					.getStatusElement()
@@ -444,12 +440,12 @@ export class Speedy extends SpeedyCore {
 		}
 		if (mw.config.get('wgPageContentModel') === 'Scribunto') {
 			let equals = '';
-			while (code.indexOf(`]${equals}]`) !== -1) {
+			while (code.includes(`]${equals}]`)) {
 				equals += '=';
 			}
 			code = `require('Module:Module wikitext')._addText([${equals}[${code}]${equals}]);`;
 		} else if (
-			['javascript', 'css', 'sanitized-css'].indexOf(mw.config.get('wgPageContentModel')) !== -1
+			['javascript', 'css', 'sanitized-css'].includes(mw.config.get('wgPageContentModel'))
 		) {
 			code = `/* ${code} */`;
 		}
@@ -459,7 +455,7 @@ export class Speedy extends SpeedyCore {
 			editsummary = `Requesting [[WM:CSD|speedy deletion]] (${this.buildCombinedReason()}).`;
 		} else {
 			const criteriaText = params.normalizeds
-				.map((norm) => `[[WM:CSD#${norm.toUpperCase()}|CSD ${norm.toUpperCase()}]]`)
+				.map((norm: string) => `[[WM:CSD#${norm.toUpperCase()}|CSD ${norm.toUpperCase()}]]`)
 				.join(', ');
 			editsummary = `Requesting speedy deletion (${criteriaText}).`;
 		}

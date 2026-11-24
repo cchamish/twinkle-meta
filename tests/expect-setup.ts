@@ -11,7 +11,7 @@ const chaiAsPromised = require('chai-as-promised');
 chai.use(chaiAsPromised);
 
 // Make sure chai and jest ".not" play nice together
-const originalNot = Object.getOwnPropertyDescriptor(chai.Assertion.prototype, 'not').get;
+const originalNot = Object.getOwnPropertyDescriptor(chai.Assertion.prototype, 'not')!.get!;
 Object.defineProperty(chai.Assertion.prototype, 'not', {
 	get() {
 		Object.assign(this, this.assignedNot);
