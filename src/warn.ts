@@ -176,6 +176,8 @@ export class Warn extends WarnCore {
 					w('Image source', 'Uploaded file missing source', 'Notice: file missing source'),
 					w('Upload warning', 'Inappropriate file upload', 'Notice: file upload warning'),
 					w('Sb', 'Use the sandbox for tests', 'Notice: please use the sandbox'),
+					w('Blocked', 'Blocked from editing Meta', 'You have been blocked from editing Meta'),
+					w('Welcome', 'Welcome to Meta-Wiki', 'Welcome!'),
 				],
 			},
 		} as Record<string, warningLevel>;
@@ -187,6 +189,13 @@ export class Warn extends WarnCore {
 		reason: string,
 		isCustom: boolean
 	): string {
+		if (templateName === 'Blocked') {
+			return makeTemplate('subst:Blocked', {
+				1: article || '',
+				2: reason || '',
+				sig: '~~~~',
+			});
+		}
 		let text = makeTemplate(`subst:${templateName}`, {
 			1: article || '',
 			2: reason && !isCustom ? reason : '',
@@ -194,7 +203,7 @@ export class Warn extends WarnCore {
 		if (isCustom && reason) {
 			text += ` ''${reason}''`;
 		}
-		// Meta's Test1..4/Spam/Attack/Bv templates include {{{sig|~~~~}}} via {{warning message}}
+		// Meta's auto-signed warning templates already embed ~~~~
 		return AUTO_SIGNED_TEMPLATES.has(templateName) ? text : `${text} ~~~~`;
 	}
 
