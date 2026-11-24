@@ -18,6 +18,11 @@ module.exports = {
 				enforce: 'pre',
 			},
 			{
+				test: /[\\/]twinkle-core[\\/]src[\\/].*\.ts$/,
+				loader: path.resolve(__dirname, 'scripts/twinkle-core-loader.js'),
+				enforce: 'pre',
+			},
+			{
 				test: /\.ts$/,
 				loader: 'ts-loader',
 				options: {
