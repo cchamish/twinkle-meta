@@ -44,14 +44,49 @@ const prompts = require('prompts');
 const chalk = require('chalk');
 const minimist = require('minimist');
 
+const USER_PREFIX = 'User:Hamish';
+
+const loaderScript = `/* <nowiki> */
+mw.loader.using([
+	'mediawiki.user', 'mediawiki.util', 'mediawiki.Title', 'mediawiki.api',
+	'mediawiki.storage', 'mediawiki.libs.pluralruleparser'
+]).then(function () {
+	function loadJs(pageName) {
+		return mw.loader.getScript(
+			'/w/index.php?title=${USER_PREFIX}/' + pageName + '&action=raw&ctype=text/javascript'
+		);
+	}
+	function loadCss(pageName) {
+		mw.loader.load(
+			'/w/index.php?title=${USER_PREFIX}/' + pageName + '&action=raw&ctype=text/css',
+			'text/css'
+		);
+	}
+	mw.loader.load('jquery.ui');
+
+	// Morebits needs to be available for twinkle.js to parse
+	loadJs('twinkle/morebits.js').then(function () {
+		loadJs('twinkle/twinkle.js');
+	});
+	loadJs('twinkle/select2.js');
+	loadCss('twinkle/twinkle.css');
+	loadCss('twinkle/morebits.css');
+	loadCss('twinkle/select2.css');
+});
+/* </nowiki> */
+`;
+
 // Adjust target file names if necessary
 // All file paths are with respect to repository root
 // Remove twinkle-pagestyles.css if deploying as user script
 const deployTargets = [
-	{ file: 'build/twinkle.js', target: 'User:Hamish/twinkle.js' },
-	{ file: 'build/twinkle.css', target: 'User:Hamish/twinkle.css' },
-	{ file: 'build/morebits.js', target: 'User:Hamish/morebits.js' },
-	{ file: 'build/morebits.css', target: 'User:Hamish/morebits.css' },
+	{ file: 'build/twinkle.js', target: `${USER_PREFIX}/twinkle/twinkle.js` },
+	{ file: 'build/twinkle.css', target: `${USER_PREFIX}/twinkle/twinkle.css` },
+	{ file: 'build/morebits.js', target: `${USER_PREFIX}/twinkle/morebits.js` },
+	{ file: 'build/morebits.css', target: `${USER_PREFIX}/twinkle/morebits.css` },
+	{ file: 'node_modules/twinkle-core/lib/select2.min.js', target: `${USER_PREFIX}/twinkle/select2.js` },
+	{ file: 'node_modules/twinkle-core/lib/select2.min.css', target: `${USER_PREFIX}/twinkle/select2.css` },
+	{ content: loaderScript, target: `${USER_PREFIX}/twinkle.js` },
 ];
 
 class Deploy {
@@ -123,17 +158,18 @@ class Deploy {
 
 		log('yellow', '--- starting deployment ---');
 
-		for await (let { file, target } of deployTargets) {
-			let fileText = await this.readFile(file);
+		for await (let { file, content, target } of deployTargets) {
+			const label = file || 'generated loader';
+			let fileText = content !== undefined ? content : await this.readFile(file);
 			try {
 				const response = await this.api.save(target, fileText, this.editSummary);
 				if (response && response.nochange) {
-					log('yellow', `━ No change saving ${file} to ${target} on ${this.siteName}`);
+					log('yellow', `━ No change saving ${label} to ${target} on ${this.siteName}`);
 				} else {
-					log('green', `✔ Successfully saved ${file} to ${target} on ${this.siteName}`);
+					log('green', `✔ Successfully saved ${label} to ${target} on ${this.siteName}`);
 				}
 			} catch (error) {
-				log('red', `✘ Failed to save ${file} to ${target} on ${this.siteName}`);
+				log('red', `✘ Failed to save ${label} to ${target} on ${this.siteName}`);
 				logError(error);
 			}
 		}
