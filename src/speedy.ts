@@ -516,7 +516,7 @@ export class Speedy extends SpeedyCore {
 					name: 'deleteSysopDefaultToDelete',
 					label: 'Default to outright deletion instead of requesting deletion',
 					type: 'boolean',
-					default: false,
+					default: true,
 					adminOnly: true,
 				},
 				{
